@@ -1,0 +1,255 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+:host {
+  display: block;
+}
+
+.cad-hero {
+  &__grid {
+    display: grid;
+    gap: sp(10);
+    align-items: center;
+
+    @include up(lg) {
+      grid-template-columns: 1.1fr 1fr;
+    }
+  }
+
+  &__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: sp(3);
+    margin-top: sp(8);
+  }
+
+  &__visual {
+    @include crop-marks($c-accent, 16px);
+    margin: 0;
+    padding: sp(2);
+    border: 1px solid $c-border;
+    border-radius: $radius-sm;
+    background: $c-card;
+
+    img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 2px;
+    }
+
+    figcaption {
+      padding: sp(3) sp(2) sp(1);
+      font-size: 0.75rem;
+      color: $c-text-3;
+    }
+  }
+}
+
+.service {
+  @include card(true);
+  display: flex;
+  flex-direction: column;
+  gap: sp(3);
+  padding: sp(6);
+
+  @include up(lg) {
+    padding: sp(8);
+  }
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: $radius-sm;
+    background: $c-carbon;
+    color: $c-accent;
+
+    app-icon {
+      width: 26px;
+      height: 26px;
+    }
+  }
+
+  &__tag {
+    margin-top: sp(3);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: $c-accent-text;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: $c-text-2;
+  }
+
+  &__list {
+    display: grid;
+    gap: sp(2);
+    margin: sp(2) 0 sp(4);
+    font-size: 0.875rem;
+
+    li {
+      display: flex;
+      gap: sp(2);
+    }
+
+    app-icon {
+      width: 16px;
+      height: 16px;
+      margin-top: 3px;
+      color: $c-success;
+    }
+  }
+
+  &__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: sp(3);
+    margin-top: auto;
+    padding-top: sp(4);
+    border-top: 1px dashed $c-border;
+  }
+
+  &__price {
+    font-weight: 600;
+  }
+}
+
+.process {
+  display: grid;
+  gap: sp(4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include up(md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include up(lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  li {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: sp(2);
+    padding: sp(6);
+    border: 1px solid $c-border;
+    border-radius: $radius-md;
+    background: $c-card;
+  }
+
+  &__num {
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1;
+    color: $c-border-strong;
+  }
+
+  h3 {
+    margin-top: sp(3);
+    font-size: 1.1rem;
+  }
+
+  p {
+    font-size: 0.875rem;
+    color: $c-text-2;
+  }
+}
+
+.form-layout {
+  display: grid;
+  gap: sp(10);
+  align-items: start;
+
+  @include up(lg) {
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: sp(16);
+  }
+}
+
+.form-intro {
+  display: grid;
+  gap: sp(4);
+
+  @include up(lg) {
+    position: sticky;
+    top: calc(#{$header-height} + 2rem);
+  }
+
+  p {
+    color: $c-text-2;
+  }
+
+  &__list {
+    display: grid;
+    gap: sp(3);
+    margin-top: sp(2);
+    font-size: 0.9rem;
+
+    li {
+      display: flex;
+      gap: sp(3);
+    }
+
+    app-icon {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      color: $c-accent;
+    }
+  }
+}
+
+.form-card {
+  @include card;
+  display: grid;
+  gap: sp(5);
+  padding: sp(6);
+
+  @include up(md) {
+    padding: sp(8);
+  }
+}
+
+.option-cards--stack {
+  grid-template-columns: 1fr !important;
+}
+
+.success {
+  @include card;
+  display: grid;
+  justify-items: start;
+  gap: sp(4);
+  padding: sp(10) sp(8);
+  border-color: rgba(5, 150, 105, 0.4);
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: $c-success-soft;
+    color: $c-success;
+
+    app-icon {
+      width: 26px;
+      height: 26px;
+    }
+  }
+
+  p {
+    color: $c-text-2;
+  }
+}

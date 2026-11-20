@@ -1,0 +1,262 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+:host {
+  display: block;
+}
+
+.detail-hero {
+  &__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: sp(2);
+    margin-top: sp(6);
+
+    app-icon {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  h1 {
+    margin-top: sp(4) !important;
+  }
+
+  &__sub {
+    margin-top: sp(2);
+    font-family: $font-display;
+    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+    font-weight: 500;
+    color: $c-accent-text;
+  }
+
+  &__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: sp(3);
+    margin-top: sp(8);
+  }
+}
+
+.layout {
+  display: grid;
+  gap: sp(8);
+  align-items: start;
+
+  @include up(lg) {
+    grid-template-columns: minmax(0, 1fr) 380px;
+    gap: sp(12);
+  }
+}
+
+.content {
+  display: grid;
+  gap: sp(5);
+}
+
+.block {
+  @include card;
+  padding: sp(6);
+
+  @include up(md) {
+    padding: sp(8);
+  }
+
+  &__title {
+    display: flex;
+    align-items: baseline;
+    gap: sp(3);
+    margin-bottom: sp(5);
+    font-size: 1.2rem;
+
+    .mono {
+      font-size: 0.75rem;
+      color: $c-accent-text;
+    }
+  }
+
+  &__text {
+    color: $c-text-2;
+    line-height: 1.75;
+  }
+
+  &__note {
+    margin-top: sp(4);
+    font-size: 0.8rem;
+    color: $c-text-3;
+  }
+}
+
+.checklist {
+  display: grid;
+  gap: sp(3);
+
+  @include up(sm) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: sp(3);
+    padding: sp(3) sp(4);
+    border: 1px solid $c-border;
+    border-radius: $radius-sm;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  app-icon {
+    width: 18px;
+    height: 18px;
+    color: $c-success;
+  }
+}
+
+.apps {
+  display: grid;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: sp(4);
+    padding-block: sp(3);
+    border-bottom: 1px solid $c-border;
+    font-size: 0.95rem;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    .mono {
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border: 1px solid $c-border;
+      border-radius: $radius-xs;
+      font-size: 0.75rem;
+      color: $c-text-3;
+    }
+  }
+}
+
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: sp(3);
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: sp(2);
+    padding: sp(2) sp(3) sp(2) sp(2);
+    border: 1px solid $c-border;
+    border-radius: 999px;
+    font-size: 0.875rem;
+  }
+}
+
+.swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid rgba(15, 23, 42, 0.18);
+
+  &--clear {
+    background-image:
+      linear-gradient(45deg, #e2e8f0 25%, transparent 25%),
+      linear-gradient(-45deg, #e2e8f0 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #e2e8f0 75%),
+      linear-gradient(-45deg, transparent 75%, #e2e8f0 75%) !important;
+    background-size: 8px 8px !important;
+    background-color: #fff !important;
+  }
+}
+
+.post {
+  display: grid;
+  gap: sp(3);
+
+  li {
+    display: grid;
+    gap: 2px;
+    padding: sp(4);
+    border-left: 2px solid $c-accent;
+    background: $c-bg;
+    font-size: 0.9rem;
+
+    span {
+      color: $c-text-2;
+      font-size: 0.85rem;
+    }
+  }
+}
+
+// ------------------------------------------------------------ Datasheet aside
+.sheet {
+  @include card;
+  @include crop-marks($c-accent, 14px);
+  display: grid;
+  gap: sp(5);
+  padding: sp(6);
+
+  @include up(lg) {
+    position: sticky;
+    top: calc(#{$header-height} + 1.5rem);
+  }
+
+  &__head {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: sp(3);
+    border-bottom: 2px solid $c-carbon;
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__code {
+    font-size: 0.72rem;
+    color: $c-text-3;
+  }
+
+  &__price {
+    display: grid;
+    gap: sp(3);
+    padding: sp(4);
+    border-radius: $radius-sm;
+    background: $c-surface-2;
+
+    div {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    small {
+      font-size: 0.75rem;
+      color: $c-text-3;
+    }
+  }
+
+  &__price-label {
+    font-size: 0.85rem;
+    color: $c-text-2;
+  }
+
+  &__price-value {
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+
+  &__note {
+    font-size: 0.75rem;
+    color: $c-text-3;
+    text-align: center;
+  }
+}

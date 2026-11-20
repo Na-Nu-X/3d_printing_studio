@@ -1,0 +1,140 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+:host {
+  display: grid;
+  gap: sp(2);
+}
+
+.zone {
+  display: grid;
+  justify-items: center;
+  gap: sp(2);
+  padding: sp(10) sp(6);
+  border: 1.5px dashed $c-border-strong;
+  border-radius: $radius-md;
+  background: $c-bg;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color $dur-fast $ease,
+    background-color $dur-fast $ease;
+  @include grid-lines(rgba(15, 23, 42, 0.03), 20px);
+
+  &:hover,
+  &.is-dragging {
+    border-color: $c-accent;
+    background-color: $c-accent-soft;
+  }
+
+  &:focus-within {
+    @include focus-ring;
+  }
+
+  &.is-invalid {
+    border-color: $c-danger;
+  }
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    margin-bottom: sp(2);
+    border: 1px solid $c-border;
+    border-radius: $radius-sm;
+    background: $c-card;
+    color: $c-accent;
+
+    app-icon {
+      width: 26px;
+      height: 26px;
+    }
+  }
+
+  &__title {
+    font-weight: 600;
+  }
+
+  &__link {
+    color: $c-accent-text;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  &__hint {
+    font-size: 0.8rem;
+    color: $c-text-3;
+  }
+}
+
+.file {
+  display: flex;
+  align-items: center;
+  gap: sp(4);
+  padding: sp(4);
+  border: 1px solid $c-success;
+  border-radius: $radius-md;
+  background: $c-card;
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    flex: none;
+    border-radius: $radius-sm;
+    background: $c-success-soft;
+    color: $c-success-text;
+
+    app-icon {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  &__info {
+    display: grid;
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__name {
+    overflow: hidden;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__meta {
+    font-size: 0.78rem;
+    color: $c-text-3;
+  }
+
+  .badge {
+    @include down(sm) {
+      display: none;
+    }
+  }
+
+  &__remove {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid $c-border;
+    border-radius: $radius-sm;
+    background: $c-card;
+    color: $c-text-2;
+
+    &:hover {
+      border-color: $c-danger;
+      color: $c-danger-text;
+    }
+
+    app-icon {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}

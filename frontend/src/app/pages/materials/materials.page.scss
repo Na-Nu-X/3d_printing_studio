@@ -1,0 +1,228 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+:host {
+  display: block;
+}
+
+.techbar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border: 1px solid $c-border;
+  border-radius: $radius-md;
+  background: $c-card;
+  overflow: hidden;
+
+  @include up(lg) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  &__item {
+    position: relative;
+    display: grid;
+    gap: sp(1);
+    padding: sp(4) sp(5);
+    border: 0;
+    border-right: 1px solid $c-border;
+    border-bottom: 1px solid $c-border;
+    background: transparent;
+    text-align: left;
+    transition: background-color $dur-fast $ease;
+
+    &:hover {
+      background: $c-bg;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: $c-accent;
+      transform: scaleX(0);
+      transition: transform $dur $ease;
+    }
+
+    &.is-active {
+      background: $c-bg;
+
+      &::after {
+        transform: scaleX(1);
+      }
+
+      .techbar__name app-icon {
+        color: $c-accent;
+      }
+    }
+  }
+
+  &__name {
+    display: inline-flex;
+    align-items: center;
+    gap: sp(2);
+    font-family: $font-display;
+    font-weight: 600;
+    font-size: 1rem;
+
+    app-icon {
+      width: 20px;
+      height: 20px;
+      color: $c-text-3;
+    }
+  }
+
+  &__meta {
+    font-size: 0.75rem;
+    color: $c-text-3;
+  }
+}
+
+.techinfo {
+  display: grid;
+  gap: sp(6);
+  margin-top: sp(5);
+  padding: sp(6);
+  border: 1px solid $c-border;
+  border-left: 3px solid $c-accent;
+  border-radius: $radius-sm;
+  background: $c-card;
+
+  @include up(lg) {
+    grid-template-columns: 1.3fr 1fr;
+    align-items: center;
+  }
+
+  p {
+    margin-top: sp(2);
+    font-size: 0.925rem;
+    color: $c-text-2;
+  }
+
+  &__specs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: sp(4);
+    margin: 0;
+
+    dt {
+      @include eyebrow;
+      font-size: 0.66rem;
+      color: $c-text-3;
+    }
+
+    dd {
+      margin: sp(1) 0 0;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+.toolbar {
+  display: grid;
+  gap: sp(3);
+  margin-top: sp(8);
+
+  @include up(md) {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+
+  &__search {
+    position: relative;
+
+    app-icon {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      transform: translateY(-50%);
+      color: $c-text-3;
+      pointer-events: none;
+    }
+
+    .input {
+      padding-left: 2.6rem;
+    }
+  }
+
+  &__sort {
+    display: flex;
+    align-items: center;
+    gap: sp(3);
+
+    label {
+      font-size: 0.875rem;
+      color: $c-text-2;
+      white-space: nowrap;
+    }
+
+    .select {
+      min-width: 210px;
+    }
+  }
+}
+
+.results {
+  min-height: 1.5em;
+  margin-block: sp(5) sp(4);
+  font-size: 0.8rem;
+  color: $c-text-3;
+}
+
+// ------------------------------------------------------------ Compare table
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid $c-border;
+  border-radius: $radius-md;
+  background: $c-card;
+}
+
+.compare {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+
+  th,
+  td {
+    padding: sp(3) sp(5);
+    border-bottom: 1px solid $c-border;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  thead th {
+    @include eyebrow;
+    font-size: 0.68rem;
+    color: $c-text-3;
+    background: $c-bg;
+  }
+
+  tbody tr:last-child > * {
+    border-bottom: 0;
+  }
+
+  tbody tr:hover {
+    background: $c-bg;
+  }
+
+  tbody th {
+    font-weight: 600;
+
+    a {
+      color: $c-text;
+
+      &:hover {
+        color: $c-accent-text;
+      }
+    }
+  }
+
+  .num {
+    text-align: right;
+  }
+}

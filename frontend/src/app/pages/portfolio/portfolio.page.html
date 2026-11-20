@@ -1,0 +1,118 @@
+<header class="page-hero">
+  <div class="container hero-split">
+    <div>
+      <nav class="breadcrumb" aria-label="Omrvinková navigácia">
+        <a routerLink="/">Domov</a><span aria-hidden="true">/</span><span>Realizácie</span>
+      </nav>
+      <h1>Portfólio realizácií a prípadové štúdie</h1>
+      <p class="lead">
+        Funkčné prototypy, priemyselné náhradné diely, architektonické modely a malosériová
+        výroba. Pri každej zákazke uvádzame reálne výrobné parametre – výšku vrstvy, výplň aj
+        veľkosť série.
+      </p>
+    </div>
+    @if (status() === 'ready') {
+      <dl class="totals">
+        <div><dt>Prípadových štúdií</dt><dd class="mono">{{ totals().projects }}</dd></div>
+        <div><dt>Vyrobených kusov</dt><dd class="mono">{{ totals().pieces }}</dd></div>
+        <div><dt>Odvetví</dt><dd class="mono">{{ totals().sectors }}</dd></div>
+      </dl>
+    }
+  </div>
+</header>
+
+<section class="section section--tight">
+  <div class="container">
+    <div class="filters">
+      <div class="filters__group">
+        <span class="filters__label">Technológia</span>
+        <div class="chips" role="group" aria-label="Filtrovať podľa technológie">
+          <button type="button" class="chip" [attr.aria-pressed]="!technologia()" (click)="setFilter('technologia', null)">
+            Všetky
+          </button>
+          @for (t of technologies(); track t.slug) {
+            <button
+              type="button"
+              class="chip"
+              [attr.aria-pressed]="technologia() === t.slug"
+              (click)="setFilter('technologia', t.slug)"
+            >
+              <app-icon [name]="t.icon_name" /> {{ techShort(t.name) }}
+            </button>
+          }
+        </div>
+      </div>
+      <div class="filters__group">
+        <span class="filters__label">Odvetvie</span>
+        <div class="chips" role="group" aria-label="Filtrovať podľa odvetvia">
+          <button type="button" class="chip" [attr.aria-pressed]="!odvetvie()" (click)="setFilter('odvetvie', null)">
+            Všetky
+          </button>
+          @for (s of sectors(); track s) {
+            <button
+              type="button"
+              class="chip"
+              [attr.aria-pressed]="odvetvie() === s"
+              (click)="setFilter('odvetvie', s)"
+            >
+              {{ s }}
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+
+    @switch (status()) {
+      @case ('loading') {
+        <div class="grid grid--3">
+          @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+            <div class="skeleton" style="height: 520px"></div>
+          }
+        </div>
+      }
+      @case ('error') {
+        <div class="state">
+          <app-icon name="alert" />
+          <p>Realizácie sa nepodarilo načítať.</p>
+          <button type="button" class="btn btn--outline btn--sm" (click)="load()">Skúsiť znova</button>
+        </div>
+      }
+      @default {
+        @if (filtered().length) {
+          <p class="results mono" aria-live="polite">{{ filtered().length }} realizácií</p>
+          <div class="grid grid--3">
+            @for (p of filtered(); track p.slug) {
+              <app-portfolio-card [project]="p" />
+            }
+          </div>
+        } @else {
+          <div class="state">
+            <p>Pre zvolenú kombináciu filtrov zatiaľ nemáme zverejnenú realizáciu.</p>
+            <button
+              type="button"
+              class="btn btn--outline btn--sm"
+              (click)="clearFilters()"
+            >
+              Zrušiť filtre
+            </button>
+          </div>
+        }
+      }
+    }
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="container">
+    <div class="cta">
+      <div>
+        <span class="eyebrow">Vaša zákazka</span>
+        <h2>Pripravujete podobný projekt?</h2>
+        <p>Pošlite nám 3D model alebo výkres – ozveme sa s technickým návrhom a cenou do 24 hodín.</p>
+      </div>
+      <a routerLink="/dopyt" class="btn btn--primary btn--lg">
+        <app-icon name="upload" /> Nahrať model
+      </a>
+    </div>
+  </div>
+</section>

@@ -9,9 +9,9 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
   imports: [RouterOutlet, NavbarComponent, FooterComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <a class="skip-link" href="#obsah">Preskočiť na obsah</a>
+    <a class="skip-link" href="#obsah" (click)="skipToContent($event, main)">Preskočiť na obsah</a>
     <app-navbar />
-    <main id="obsah" tabindex="-1">
+    <main id="obsah" tabindex="-1" #main>
       <router-outlet />
     </main>
     <app-footer />
@@ -28,4 +28,11 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
     }
   `,
 })
-export class App {}
+export class App {
+  /** In-page skip link (plain `#hash` links resolve against <base href> otherwise). */
+  protected skipToContent(event: Event, main: HTMLElement): void {
+    event.preventDefault();
+    main.focus();
+    main.scrollIntoView();
+  }
+}

@@ -1,0 +1,160 @@
+<header class="page-hero">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Omrvinková navigácia">
+      <a routerLink="/">Domov</a><span aria-hidden="true">/</span><span>Technológie a materiály</span>
+    </nav>
+    <h1>Technológie a materiály s technickými listami</h1>
+    <p class="lead">
+      Tri výrobné technológie a overené technické materiály – od cenovo dostupného PLA po
+      nylon s uhlíkovými vláknami. Porovnajte mechanické vlastnosti, teplotnú odolnosť a cenu
+      za gram a vyberte materiál presne pre váš diel.
+    </p>
+  </div>
+</header>
+
+<section class="section section--tight">
+  <div class="container">
+    <!-- Technology overview -->
+    @if (catalog.technologies().length) {
+      <div class="techbar" role="group" aria-label="Filtrovať podľa technológie">
+        <button
+          type="button"
+          class="techbar__item"
+          [class.is-active]="!activeTech()"
+          [attr.aria-pressed]="!activeTech()"
+          (click)="selectTech(null)"
+        >
+          <span class="techbar__name">Všetky technológie</span>
+          <span class="techbar__meta mono">{{ catalog.materials().length }} materiálov</span>
+        </button>
+        @for (t of catalog.technologies(); track t.slug) {
+          <button
+            type="button"
+            class="techbar__item"
+            [class.is-active]="activeTech()?.slug === t.slug"
+            [attr.aria-pressed]="activeTech()?.slug === t.slug"
+            (click)="selectTech(t.slug)"
+          >
+            <span class="techbar__name">
+              <app-icon [name]="t.icon_name" /> {{ techShort(t.name) }}
+            </span>
+            <span class="techbar__meta mono">{{ t.tolerance_label }} · {{ countFor(t.slug) }} mat.</span>
+          </button>
+        }
+      </div>
+    }
+
+    @if (activeTech(); as t) {
+      <div class="techinfo">
+        <div>
+          <h2 class="h3">{{ t.name }}</h2>
+          <p>{{ t.short_summary }}</p>
+        </div>
+        <dl class="techinfo__specs">
+          <div><dt>Tolerancia</dt><dd class="mono">{{ t.tolerance_label }}</dd></div>
+          <div><dt>Max. objem</dt><dd class="mono">{{ t.max_build_volume }}</dd></div>
+          <div><dt>Min. vrstva</dt><dd class="mono">{{ t.min_layer_height }}</dd></div>
+          <div><dt>Dodanie</dt><dd class="mono">{{ t.typical_lead_time }}</dd></div>
+        </dl>
+      </div>
+    }
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="toolbar__search">
+        <app-icon name="search" />
+        <label class="visually-hidden" for="mat-search">Hľadať materiál</label>
+        <input
+          id="mat-search"
+          type="search"
+          class="input"
+          placeholder="Hľadať materiál alebo vlastnosť (napr. UV, uhlík, flexibilný)…"
+          [value]="search()"
+          (input)="search.set($any($event.target).value)"
+        />
+      </div>
+      <div class="toolbar__sort">
+        <label for="mat-sort">Zoradiť</label>
+        <select id="mat-sort" class="select" (change)="setSort($any($event.target).value)">
+          @for (o of sortOptions; track o.value) {
+            <option [value]="o.value" [selected]="sort() === o.value">{{ o.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <p class="results mono" aria-live="polite">
+      @if (!catalog.loading()) {
+        Zobrazených {{ filtered().length }} z {{ catalog.materials().length }} materiálov
+      }
+    </p>
+
+    <!-- Results -->
+    @if (catalog.error()) {
+      <div class="state">
+        <app-icon name="alert" />
+        <p>Katalóg materiálov sa nepodarilo načítať.</p>
+        <button type="button" class="btn btn--outline btn--sm" (click)="catalog.load(true)">Skúsiť znova</button>
+      </div>
+    } @else if (catalog.loading()) {
+      <div class="grid grid--3">
+        @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+          <div class="skeleton" style="height: 460px"></div>
+        }
+      </div>
+    } @else if (filtered().length === 0) {
+      <div class="state">
+        <app-icon name="search" />
+        <p>Zadaným kritériám nezodpovedá žiadny materiál.</p>
+        <button type="button" class="btn btn--outline btn--sm" (click)="resetFilters()">Zrušiť filtre</button>
+      </div>
+    } @else {
+      <div class="grid grid--3">
+        @for (m of filtered(); track m.slug) {
+          <app-material-card [material]="m" />
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Comparison table -->
+@if (catalog.materials().length) {
+  <section class="section section--soft">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Porovnanie</span>
+        <h2>Rýchle porovnanie materiálov</h2>
+        <p>Hodnoty sú typické pre výtlačky s plnou výplňou testované v smere XY.</p>
+      </div>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Tabuľka porovnania materiálov">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th scope="col">Materiál</th>
+              <th scope="col">Technológia</th>
+              <th scope="col" class="num">Pevnosť v ťahu</th>
+              <th scope="col" class="num">Max. teplota</th>
+              <th scope="col" class="num">Cena / g</th>
+              <th scope="col" class="num">Prípravný poplatok</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (m of catalog.materials(); track m.slug) {
+              <tr>
+                <th scope="row">
+                  <a [routerLink]="['/technologie-a-materialy', m.slug]">{{ materialShort(m.name) }}</a>
+                </th>
+                <td><span class="badge">{{ techShort(m.technology.name) }}</span></td>
+                <td class="num mono">{{ m.tensile_strength_mpa ?? '—' }} MPa</td>
+                <td class="num mono">{{ m.max_temp_celsius ?? '—' }} °C</td>
+                <td class="num mono">{{ m.price_per_gram_eur | eur: true }}</td>
+                <td class="num mono">{{ m.setup_fee_eur | eur }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+}

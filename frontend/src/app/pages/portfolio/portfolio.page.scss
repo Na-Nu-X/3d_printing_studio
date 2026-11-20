@@ -1,0 +1,106 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+:host {
+  display: block;
+}
+
+.hero-split {
+  display: grid;
+  gap: sp(8);
+  align-items: end;
+
+  @include up(lg) {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+.totals {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  margin: 0;
+  border: 1px solid $c-border;
+  border-radius: $radius-sm;
+  background: $c-card;
+
+  div {
+    padding: sp(4) sp(5);
+
+    & + div {
+      border-left: 1px solid $c-border;
+    }
+  }
+
+  dt {
+    @include eyebrow;
+    font-size: 0.62rem;
+    color: $c-text-3;
+  }
+
+  dd {
+    margin: sp(1) 0 0;
+    font-size: 1.6rem;
+    font-weight: 600;
+  }
+}
+
+.filters {
+  display: grid;
+  gap: sp(4);
+  margin-bottom: sp(6);
+  padding-bottom: sp(6);
+  border-bottom: 1px solid $c-border;
+
+  @include up(lg) {
+    grid-template-columns: auto 1fr;
+    gap: sp(10);
+  }
+
+  &__group {
+    display: grid;
+    gap: sp(2);
+  }
+
+  &__label {
+    @include eyebrow;
+    font-size: 0.68rem;
+    color: $c-text-3;
+  }
+
+  .chip app-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.results {
+  margin-bottom: sp(4);
+  font-size: 0.8rem;
+  color: $c-text-3;
+}
+
+.cta {
+  display: grid;
+  gap: sp(6);
+  align-items: center;
+  padding: sp(8) sp(6);
+  border: 1px solid $c-border;
+  border-radius: $radius-md;
+  background: $c-card;
+  @include grid-lines(rgba(15, 23, 42, 0.035), 28px);
+
+  @include up(lg) {
+    grid-template-columns: 1fr auto;
+    padding: sp(10) sp(12);
+  }
+
+  h2 {
+    margin-top: sp(2);
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  }
+
+  p {
+    margin-top: sp(2);
+    color: $c-text-2;
+  }
+}

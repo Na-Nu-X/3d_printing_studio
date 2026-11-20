@@ -1,0 +1,384 @@
+<header class="page-hero">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Omrvinková navigácia">
+      <a routerLink="/">Domov</a><span aria-hidden="true">/</span><span>Cenová ponuka</span>
+    </nav>
+    <h1>Nezáväzná kalkulácia 3D tlače</h1>
+    <p class="lead">
+      Nahrajte 3D model, zvoľte materiál a počet kusov. Technik skontroluje vyrobiteľnosť a
+      presnú cenovú ponuku s termínom dodania vám pošle do 24 hodín.
+    </p>
+  </div>
+</header>
+
+<section class="section section--tight">
+  <div class="container layout">
+    @if (createdId(); as id) {
+      <!-- ============================== Success -->
+      <div class="success" role="status">
+        <span class="success__icon"><app-icon name="check" [strokeWidth]="2" /></span>
+        <span class="eyebrow">Dopyt prijatý</span>
+        <h2>Ďakujeme, váš dopyt <span class="mono">#{{ id }}</span> sme prijali.</h2>
+        <p>
+          Potvrdenie a cenovú ponuku pošleme na
+          <strong>{{ form.controls.email.value }}</strong>. {{ config.contact.responseTime }}
+        </p>
+        <ol class="success__steps">
+          <li><span class="mono">01</span> Kontrola modelu a vyrobiteľnosti</li>
+          <li><span class="mono">02</span> Odporúčanie orientácie a materiálu</li>
+          <li><span class="mono">03</span> Presná ponuka s termínom dodania</li>
+        </ol>
+        <div class="success__actions">
+          <button type="button" class="btn btn--outline" (click)="startOver()">Odoslať ďalší dopyt</button>
+          <a routerLink="/realizacie" class="btn btn--link">Pozrieť realizácie <app-icon name="arrow-right" /></a>
+        </div>
+      </div>
+    } @else {
+      <!-- ============================== Wizard -->
+      <form class="wizard" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        @if (prefilled()) {
+          <div class="alert alert--success">
+            <app-icon name="check" />
+            <p>Parametre sme predvyplnili podľa vášho výberu. Stačí nahrať 3D model a doplniť kontakt.</p>
+          </div>
+        }
+
+        <!-- Step 1: model -->
+        <fieldset class="panel">
+          <legend class="panel__legend"><span class="panel__num mono">01</span> 3D model</legend>
+          <div class="tabs" role="tablist" aria-label="Spôsob odovzdania modelu">
+            <button
+              type="button"
+              role="tab"
+              class="tabs__btn"
+              [attr.aria-selected]="sourceMode() === 'file'"
+              (click)="setSourceMode('file')"
+            >
+              <app-icon name="upload" /> Nahrať súbor
+            </button>
+            <button
+              type="button"
+              role="tab"
+              class="tabs__btn"
+              [attr.aria-selected]="sourceMode() === 'link'"
+              (click)="setSourceMode('link')"
+            >
+              <app-icon name="link" /> Odkaz na cloud
+            </button>
+          </div>
+
+          @if (sourceMode() === 'file') {
+            <app-file-dropzone
+              [(file)]="file"
+              [accept]="config.uploadAccept"
+              [maxSizeMb]="config.capabilities.maxFileSizeMb"
+              [invalid]="attempted() && modelMissing()"
+            />
+          } @else {
+            <div class="field">
+              <label for="q-link">Odkaz na súbor <span class="req">*</span></label>
+              <input
+                id="q-link"
+                type="url"
+                class="input"
+                formControlName="external_file_link"
+                placeholder="https://drive.google.com/… alebo WeTransfer, Dropbox, OneDrive"
+                [class.is-invalid]="(attempted() && modelMissing()) || errorFor('external_file_link')"
+              />
+              <span class="field__hint">Uistite sa, že odkaz je dostupný bez prihlásenia.</span>
+              @if (errorFor('external_file_link'); as e) {
+                <span class="field__error"><app-icon name="alert" /> {{ e }}</span>
+              }
+            </div>
+          }
+          @if (attempted() && modelMissing()) {
+            <p class="field__error" role="alert">
+              <app-icon name="alert" /> Nahrajte 3D model alebo vložte odkaz na súbor v cloude.
+            </p>
+          }
+          @if (serverFileError()) {
+            <p class="field__error" role="alert"><app-icon name="alert" /> {{ serverFileError() }}</p>
+          }
+          <p class="panel__note">
+            <app-icon name="shield" /> Súbory sú uložené zabezpečene a slúžia výhradne na nacenenie. NDA na požiadanie.
+          </p>
+        </fieldset>
+
+        <!-- Step 2: parameters -->
+        <fieldset class="panel">
+          <legend class="panel__legend"><span class="panel__num mono">02</span> Parametre výroby</legend>
+          <div class="form-grid">
+            <div class="field">
+              <label for="q-tech">Technológia <span class="opt">(voliteľné)</span></label>
+              <select id="q-tech" class="select" formControlName="technology">
+                <option value="">Neviem – poraďte mi</option>
+                @for (t of catalog.technologies(); track t.slug) {
+                  <option [value]="t.slug">{{ t.name }}</option>
+                }
+              </select>
+            </div>
+            <div class="field">
+              <label for="q-material">Materiál <span class="opt">(voliteľné)</span></label>
+              <select id="q-material" class="select" formControlName="material">
+                <option value="">Odporučte mi vhodný materiál</option>
+                @for (m of materialOptions(); track m.slug) {
+                  <option [value]="m.slug">{{ m.name }}</option>
+                }
+              </select>
+              @if (selectedMaterial(); as m) {
+                <span class="field__hint">
+                  {{ m.short_description }}
+                  <a [routerLink]="['/technologie-a-materialy', m.slug]" target="_blank">Technický list ↗</a>
+                </span>
+              }
+            </div>
+            <div class="field">
+              <label for="q-qty">Počet kusov <span class="req">*</span></label>
+              <input
+                id="q-qty"
+                type="number"
+                inputmode="numeric"
+                min="1"
+                class="input mono"
+                formControlName="quantity"
+              />
+              <span class="field__hint">Zľavy: -10 % od 10 ks · -20 % od 50 ks · -30 % od 100 ks</span>
+              @if (errorFor('quantity'); as e) {
+                <span class="field__error"><app-icon name="alert" /> {{ e }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="q-color">Požadovaná farba <span class="opt">(voliteľné)</span></label>
+              @if (selectedMaterial(); as m) {
+                <select id="q-color" class="select" formControlName="desired_color">
+                  <option value="">Bez preferencie</option>
+                  @for (c of m.available_colors; track c) {
+                    <option [value]="c">{{ c }}</option>
+                  }
+                </select>
+              } @else {
+                <input
+                  id="q-color"
+                  type="text"
+                  class="input"
+                  formControlName="desired_color"
+                  placeholder="napr. Matná čierna, RAL 7035"
+                />
+              }
+            </div>
+
+            <div class="field span-2">
+              <span class="field__label" id="q-infill-label">Požadovaná pevnosť / výplň</span>
+              <div class="option-cards" role="radiogroup" aria-labelledby="q-infill-label">
+                @for (o of infillOptions; track o.value) {
+                  <label class="option-card">
+                    <input type="radio" formControlName="infill_level" [value]="o.value" />
+                    <span class="option-card__title"><span class="mono">{{ o.percent }} %</span> {{ o.label }}</span>
+                    <span class="option-card__meta">{{ o.hint }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+
+            <div class="field span-2">
+              <span class="field__label" id="q-post-label">Dodatočné úpravy</span>
+              <div class="option-cards" role="radiogroup" aria-labelledby="q-post-label">
+                @for (o of postOptions; track o.value) {
+                  <label class="option-card">
+                    <input type="radio" formControlName="post_processing" [value]="o.value" />
+                    <span class="option-card__title">{{ o.label }}</span>
+                    <span class="option-card__meta">{{ o.hint }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Step 3: contact -->
+        <fieldset class="panel">
+          <legend class="panel__legend"><span class="panel__num mono">03</span> Kontaktné údaje</legend>
+          <div class="segmented" role="radiogroup" aria-label="Typ klienta">
+            <button
+              type="button"
+              role="radio"
+              [attr.aria-checked]="isCompany()"
+              (click)="setClientType('firma')"
+            >
+              Firma (B2B)
+            </button>
+            <button
+              type="button"
+              role="radio"
+              [attr.aria-checked]="!isCompany()"
+              (click)="setClientType('sukromna_osoba')"
+            >
+              Súkromná osoba
+            </button>
+          </div>
+
+          <div class="form-grid">
+            @if (isCompany()) {
+              <div class="field span-2">
+                <label for="q-company">Názov firmy <span class="req">*</span></label>
+                <input
+                  id="q-company"
+                  type="text"
+                  class="input"
+                  formControlName="company_name"
+                  autocomplete="organization"
+                  [class.is-invalid]="errorFor('company_name')"
+                />
+                @if (errorFor('company_name'); as e) {
+                  <span class="field__error"><app-icon name="alert" /> {{ e }}</span>
+                }
+              </div>
+            }
+            <div class="field">
+              <label for="q-name">Meno a priezvisko <span class="req">*</span></label>
+              <input
+                id="q-name"
+                type="text"
+                class="input"
+                formControlName="client_name"
+                autocomplete="name"
+                [class.is-invalid]="errorFor('client_name')"
+              />
+              @if (errorFor('client_name'); as e) {
+                <span class="field__error"><app-icon name="alert" /> {{ e }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="q-email">E-mail <span class="req">*</span></label>
+              <input
+                id="q-email"
+                type="email"
+                class="input"
+                formControlName="email"
+                autocomplete="email"
+                [class.is-invalid]="errorFor('email')"
+              />
+              @if (errorFor('email'); as e) {
+                <span class="field__error"><app-icon name="alert" /> {{ e }}</span>
+              }
+            </div>
+            <div class="field">
+              <label for="q-phone">Telefón <span class="opt">(voliteľné)</span></label>
+              <input
+                id="q-phone"
+                type="tel"
+                class="input mono"
+                formControlName="phone"
+                autocomplete="tel"
+                placeholder="+421 900 123 456"
+                [class.is-invalid]="errorFor('phone')"
+              />
+              @if (errorFor('phone'); as e) {
+                <span class="field__error"><app-icon name="alert" /> {{ e }}</span>
+              }
+            </div>
+            <div class="field span-2">
+              <label for="q-notes">Poznámka k zákazke <span class="opt">(voliteľné)</span></label>
+              <textarea
+                id="q-notes"
+                class="textarea"
+                formControlName="notes"
+                placeholder="Funkcia dielu, požadované tolerancie, zaťaženie, termín dodania…"
+              ></textarea>
+            </div>
+            <div class="field span-2">
+              <label class="checkbox">
+                <input type="checkbox" formControlName="consent" />
+                <span>
+                  Súhlasím so spracovaním osobných údajov a nahraných súborov na účel vypracovania
+                  cenovej ponuky v súlade s GDPR. <span class="req">*</span>
+                </span>
+              </label>
+              @if (errorFor('consent'); as e) {
+                <span class="field__error"><app-icon name="alert" /> {{ e }}</span>
+              }
+            </div>
+          </div>
+        </fieldset>
+
+        @if (serverMessage()) {
+          <div class="alert alert--error" role="alert">
+            <app-icon name="alert" />
+            <p>{{ serverMessage() }}</p>
+          </div>
+        }
+
+        <div class="wizard__submit">
+          <button type="submit" class="btn btn--primary btn--lg" [disabled]="submitting()">
+            @if (submitting()) {
+              <span class="spinner" aria-hidden="true"></span> Odosielam dopyt…
+            } @else {
+              <app-icon name="arrow-right" /> Odoslať nezáväzný dopyt
+            }
+          </button>
+          <p>Odoslanie je nezáväzné a bezplatné.</p>
+        </div>
+      </form>
+    }
+
+    <!-- ============================== Sidebar -->
+    <aside class="aside">
+      @if (!createdId()) {
+        <div class="summary">
+          <h2 class="summary__title mono">Zhrnutie dopytu</h2>
+          <ul class="spec-list">
+            <li>
+              <span class="k">3D model</span>
+              <span class="v summary__file">
+                @if (sourceMode() === 'file') {
+                  {{ file()?.name ?? '—' }}
+                } @else {
+                  {{ form.controls.external_file_link.value ? 'Odkaz na cloud' : '—' }}
+                }
+              </span>
+            </li>
+            <li>
+              <span class="k">Technológia</span>
+              <span class="v">{{ selectedTechnology() ? techShort(selectedTechnology()!.name) : 'Poradíme' }}</span>
+            </li>
+            <li>
+              <span class="k">Materiál</span>
+              <span class="v">{{ selectedMaterial() ? techShort(selectedMaterial()!.name) : 'Poradíme' }}</span>
+            </li>
+            <li><span class="k">Počet kusov</span><span class="v">{{ form.controls.quantity.value }} ks</span></li>
+            <li><span class="k">Výplň</span><span class="v">{{ infillLabel() }}</span></li>
+            <li><span class="k">Úpravy</span><span class="v">{{ postLabel() }}</span></li>
+          </ul>
+          @if (estimate(); as e) {
+            <div class="summary__estimate">
+              <span>Orientačná cena série</span>
+              <strong class="mono">{{ e.totalPrice | eur }}</strong>
+              <small class="mono">
+                {{ e.pricePerPiece | eur }} / ks
+                @if (e.discountRate > 0) {
+                  · zľava -{{ (e.discountRate * 100).toFixed(0) }} %
+                }
+              </small>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="studio">
+        <h2 class="studio__title mono">Dielňa a osobný odber</h2>
+        <a [href]="config.address.mapUrl" target="_blank" rel="noopener" class="studio__line">
+          <app-icon name="map-pin" />
+          <span>{{ config.address.street }}, {{ config.address.zip }} {{ config.address.city }}</span>
+        </a>
+        <dl class="studio__hours">
+          @for (row of config.pickupHours; track row.days) {
+            <div><dt>{{ row.days }}</dt><dd class="mono">{{ row.hours }}</dd></div>
+          }
+        </dl>
+        <a [href]="config.contact.phoneHref" class="studio__line mono"><app-icon name="phone" /> {{ config.contact.phone }}</a>
+        <a [href]="'mailto:' + config.contact.email" class="studio__line mono"><app-icon name="mail" /> {{ config.contact.email }}</a>
+        <p class="studio__note"><app-icon name="clock" /> {{ config.contact.responseTime }}</p>
+      </div>
+    </aside>
+  </div>
+</section>
