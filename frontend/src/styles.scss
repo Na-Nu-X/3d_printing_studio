@@ -1,0 +1,5 @@
+// Global stylesheet entry. Order matters: tokens → base → type → primitives.
+@use 'styles/tokens';
+@use 'styles/base';
+@use 'styles/typography';
+@use 'styles/components';

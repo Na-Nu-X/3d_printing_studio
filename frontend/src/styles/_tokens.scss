@@ -1,0 +1,15 @@
+@use 'variables' as *;
+
+// Runtime theme tokens. To rebrand, override these on :root
+// (e.g. in a client-specific stylesheet) — no rebuild of components needed.
+:root {
+  @each $name, $value in $palette {
+    --c-#{$name}: #{$value};
+  }
+
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  color-scheme: light;
+}

@@ -1,0 +1,97 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+html {
+  font-family: $font-body;
+  font-size: 100%;
+  line-height: 1.6;
+  color: $c-text;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: $font-display;
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  color: inherit;
+  margin: 0;
+  text-wrap: balance;
+}
+
+h1,
+.h1 {
+  font-size: clamp(2.25rem, 1.6rem + 3vw, 4rem);
+  letter-spacing: -0.035em;
+}
+
+h2,
+.h2 {
+  font-size: clamp(1.75rem, 1.4rem + 1.6vw, 2.75rem);
+}
+
+h3,
+.h3 {
+  font-size: clamp(1.2rem, 1.1rem + 0.4vw, 1.4rem);
+  letter-spacing: -0.015em;
+}
+
+h4,
+.h4 {
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.lead {
+  font-size: clamp(1.05rem, 1rem + 0.3vw, 1.2rem);
+  line-height: 1.65;
+  color: $c-text-2;
+}
+
+.text-muted {
+  color: $c-text-2;
+}
+
+.eyebrow {
+  @include eyebrow;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: $c-accent-text;
+
+  &::before {
+    content: '';
+    width: 18px;
+    height: 1px;
+    background: currentColor;
+  }
+}
+
+.mono,
+.spec {
+  @include mono-num;
+}
+
+a {
+  color: $c-accent-text;
+  text-decoration: none;
+  text-underline-offset: 3px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+strong {
+  font-weight: 600;
+}

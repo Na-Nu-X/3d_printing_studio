@@ -1,0 +1,111 @@
+// ---------------------------------------------------------------------------
+// Design tokens (SCSS side).
+// Colors are exposed as CSS custom properties in `_tokens.scss` so a client
+// can be rebranded by overriding `:root` only. SCSS variables below are
+// references to those properties plus compile-time values (breakpoints etc.).
+// ---------------------------------------------------------------------------
+
+// Brand palette — raw values (used to emit :root custom properties)
+$palette: (
+  'bg': #f8fafc,
+  'surface-2': #f1f5f9,
+  'card': #ffffff,
+  'border': #e2e8f0,
+  'border-strong': #cbd5e1,
+  'carbon': #0f172a,
+  'carbon-2': #1e293b,
+  'carbon-line': #334155,
+  'on-carbon': #f8fafc,
+  'on-carbon-muted': #94a3b8,
+  'text': #0f172a,
+  'text-2': #475569,
+  'text-3': #64748b,
+  'accent': #ea580c,
+  'accent-hover': #c2410c,
+  'accent-text': #c2410c,
+  'accent-soft': #fff7ed,
+  'accent-line': #fed7aa,
+  'success': #059669,
+  'success-text': #047857,
+  'success-soft': #ecfdf5,
+  'danger': #dc2626,
+  'danger-text': #b91c1c,
+  'danger-soft': #fef2f2,
+);
+
+// Semantic references
+$c-bg: var(--c-bg);
+$c-surface-2: var(--c-surface-2);
+$c-card: var(--c-card);
+$c-border: var(--c-border);
+$c-border-strong: var(--c-border-strong);
+$c-carbon: var(--c-carbon);
+$c-carbon-2: var(--c-carbon-2);
+$c-carbon-line: var(--c-carbon-line);
+$c-on-carbon: var(--c-on-carbon);
+$c-on-carbon-muted: var(--c-on-carbon-muted);
+$c-text: var(--c-text);
+$c-text-2: var(--c-text-2);
+$c-text-3: var(--c-text-3);
+$c-accent: var(--c-accent);
+$c-accent-hover: var(--c-accent-hover);
+$c-accent-text: var(--c-accent-text);
+$c-accent-soft: var(--c-accent-soft);
+$c-accent-line: var(--c-accent-line);
+$c-success: var(--c-success);
+$c-success-text: var(--c-success-text);
+$c-success-soft: var(--c-success-soft);
+$c-danger: var(--c-danger);
+$c-danger-text: var(--c-danger-text);
+$c-danger-soft: var(--c-danger-soft);
+
+// Typography
+$font-display: var(--font-display);
+$font-body: var(--font-body);
+$font-mono: var(--font-mono);
+
+// Radii — precise, nearly-square corners
+$radius-xs: 2px;
+$radius-sm: 4px;
+$radius-md: 6px;
+$radius-lg: 10px;
+
+// Spacing scale (4px base)
+$space: (
+  1: 0.25rem,
+  2: 0.5rem,
+  3: 0.75rem,
+  4: 1rem,
+  5: 1.25rem,
+  6: 1.5rem,
+  8: 2rem,
+  10: 2.5rem,
+  12: 3rem,
+  16: 4rem,
+  20: 5rem,
+  24: 6rem,
+);
+
+// Layout
+$container-max: 1240px;
+$container-gutter: 1rem;
+$container-gutter-lg: 2rem;
+$header-height: 68px;
+
+// Breakpoints (mobile-first)
+$breakpoints: (
+  sm: 640px,
+  md: 768px,
+  lg: 1024px,
+  xl: 1280px,
+);
+
+// Elevation — restrained, border-led
+$shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+$shadow-md: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.12);
+$shadow-lg: 0 2px 4px rgba(15, 23, 42, 0.04), 0 24px 48px -20px rgba(15, 23, 42, 0.25);
+
+// Motion
+$ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+$dur-fast: 120ms;
+$dur: 200ms;

@@ -1,0 +1,631 @@
+// Global, reusable UI primitives (buttons, badges, chips, form fields,
+// section scaffolding, states). Component-specific styles live with components.
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ---------------------------------------------------------------- Sections
+.section {
+  padding-block: sp(16);
+
+  @include up(lg) {
+    padding-block: sp(24);
+  }
+
+  &--soft {
+    background: $c-surface-2;
+    border-block: 1px solid $c-border;
+  }
+
+  &--carbon {
+    background: $c-carbon;
+    color: $c-on-carbon;
+  }
+
+  &--tight {
+    padding-block: sp(12);
+  }
+}
+
+.section-head {
+  display: grid;
+  gap: sp(4);
+  max-width: 720px;
+  margin-bottom: sp(10);
+
+  &--split {
+    max-width: none;
+
+    @include up(lg) {
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: sp(8);
+    }
+  }
+
+  p {
+    color: $c-text-2;
+    font-size: 1.05rem;
+  }
+
+  .section--carbon & p {
+    color: $c-on-carbon-muted;
+  }
+}
+
+.page-hero {
+  position: relative;
+  padding-block: sp(12) sp(10);
+  border-bottom: 1px solid $c-border;
+  background: $c-card;
+  @include grid-lines(rgba(15, 23, 42, 0.04), 40px);
+
+  @include up(lg) {
+    padding-block: sp(16) sp(12);
+  }
+
+  h1 {
+    font-size: clamp(2rem, 1.5rem + 2.4vw, 3.25rem);
+    max-width: 18ch;
+    margin-top: sp(3);
+  }
+
+  .lead {
+    max-width: 62ch;
+    margin-top: sp(4);
+  }
+}
+
+.breadcrumb {
+  @include eyebrow;
+  display: flex;
+  flex-wrap: wrap;
+  gap: sp(2);
+  color: $c-text-3;
+
+  a {
+    color: $c-text-2;
+  }
+
+  span[aria-hidden] {
+    color: $c-border-strong;
+  }
+}
+
+// ---------------------------------------------------------------- Buttons
+.btn {
+  --btn-bg: transparent;
+  --btn-fg: #{$c-text};
+  --btn-border: transparent;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: sp(2);
+  min-height: 44px;
+  padding: 0.65rem 1.15rem;
+  border: 1px solid var(--btn-border);
+  border-radius: $radius-sm;
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-family: $font-body;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color $dur-fast $ease,
+    border-color $dur-fast $ease,
+    color $dur-fast $ease,
+    transform $dur-fast $ease;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  app-icon {
+    width: 18px;
+    height: 18px;
+    flex: none;
+  }
+
+  // Industrial Orange with carbon text keeps WCAG AA contrast (5:1).
+  &--primary {
+    --btn-bg: #{$c-accent};
+    --btn-fg: #{$c-carbon};
+    --btn-border: #{$c-accent};
+
+    &:hover:not(:disabled) {
+      --btn-bg: #{$c-accent-hover};
+      --btn-border: #{$c-accent-hover};
+      --btn-fg: #fff;
+    }
+  }
+
+  &--dark {
+    --btn-bg: #{$c-carbon};
+    --btn-fg: #{$c-on-carbon};
+    --btn-border: #{$c-carbon};
+
+    &:hover:not(:disabled) {
+      --btn-bg: #{$c-carbon-2};
+    }
+  }
+
+  &--outline {
+    --btn-bg: #{$c-card};
+    --btn-fg: #{$c-text};
+    --btn-border: #{$c-border-strong};
+
+    &:hover:not(:disabled) {
+      --btn-border: #{$c-text};
+    }
+  }
+
+  &--ghost-light {
+    --btn-fg: #{$c-on-carbon};
+    --btn-border: #{$c-carbon-line};
+
+    &:hover:not(:disabled) {
+      --btn-border: #{$c-on-carbon};
+      --btn-bg: rgba(248, 250, 252, 0.04);
+    }
+  }
+
+  &--link {
+    min-height: auto;
+    padding: 0;
+    --btn-fg: #{$c-accent-text};
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &--lg {
+    min-height: 52px;
+    padding: 0.85rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  &--sm {
+    min-height: 36px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+  }
+
+  &--block {
+    width: 100%;
+  }
+}
+
+// ---------------------------------------------------------------- Badges & tags
+.badge {
+  @include mono-num;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid $c-border;
+  border-radius: $radius-xs;
+  background: $c-surface-2;
+  color: $c-text-2;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  white-space: nowrap;
+
+  &--accent {
+    border-color: $c-accent-line;
+    background: $c-accent-soft;
+    color: $c-accent-text;
+  }
+
+  &--success {
+    border-color: rgba(5, 150, 105, 0.3);
+    background: $c-success-soft;
+    color: $c-success-text;
+
+    &::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: $c-success;
+    }
+  }
+
+  &--dark {
+    border-color: $c-carbon-line;
+    background: rgba(248, 250, 252, 0.04);
+    color: $c-on-carbon;
+  }
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid $c-border;
+  background: $c-card;
+  color: $c-text-2;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: sp(2);
+}
+
+// Filter chips (toggle buttons)
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: sp(2);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: sp(2);
+  min-height: 38px;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid $c-border;
+  border-radius: $radius-sm;
+  background: $c-card;
+  color: $c-text-2;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition:
+    border-color $dur-fast $ease,
+    background-color $dur-fast $ease,
+    color $dur-fast $ease;
+
+  &:hover {
+    border-color: $c-border-strong;
+    color: $c-text;
+  }
+
+  &[aria-pressed='true'],
+  &.is-active {
+    border-color: $c-carbon;
+    background: $c-carbon;
+    color: $c-on-carbon;
+  }
+
+  .count {
+    @include mono-num;
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+}
+
+// ---------------------------------------------------------------- Forms
+.field {
+  display: grid;
+  gap: sp(2);
+
+  label,
+  .field__label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $c-text;
+
+    .req {
+      color: $c-accent-text;
+    }
+
+    .opt {
+      font-weight: 400;
+      color: $c-text-3;
+    }
+  }
+
+  &__hint {
+    font-size: 0.8rem;
+    color: $c-text-3;
+  }
+
+  &__error {
+    display: flex;
+    align-items: center;
+    gap: sp(1);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: $c-danger-text;
+  }
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid $c-border-strong;
+  border-radius: $radius-sm;
+  background: $c-card;
+  color: $c-text;
+  font-size: 0.95rem;
+  transition:
+    border-color $dur-fast $ease,
+    box-shadow $dur-fast $ease;
+
+  &::placeholder {
+    color: #94a3b8;
+  }
+
+  &:hover {
+    border-color: #94a3b8;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $c-accent;
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.18);
+  }
+
+  &.is-invalid,
+  &.ng-invalid.ng-touched {
+    border-color: $c-danger;
+  }
+}
+
+.select {
+  appearance: none;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23475569' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+}
+
+.textarea {
+  min-height: 130px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.form-grid {
+  display: grid;
+  gap: sp(5);
+
+  @include up(md) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    .span-2 {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+// Segmented radio cards
+.option-cards {
+  display: grid;
+  gap: sp(3);
+
+  @include up(sm) {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+.option-card {
+  position: relative;
+  display: grid;
+  gap: 0.2rem;
+  padding: sp(4);
+  border: 1px solid $c-border;
+  border-radius: $radius-sm;
+  background: $c-card;
+  cursor: pointer;
+  transition:
+    border-color $dur-fast $ease,
+    background-color $dur-fast $ease,
+    box-shadow $dur-fast $ease;
+
+  input {
+    @include visually-hidden;
+  }
+
+  &:hover {
+    border-color: $c-border-strong;
+  }
+
+  &__title {
+    font-weight: 600;
+    font-size: 0.925rem;
+  }
+
+  &__meta {
+    font-size: 0.8rem;
+    color: $c-text-2;
+  }
+
+  &:has(input:checked) {
+    border-color: $c-accent;
+    background: $c-accent-soft;
+    box-shadow: inset 0 0 0 1px $c-accent;
+  }
+
+  &:has(input:focus-visible) {
+    @include focus-ring;
+  }
+}
+
+.checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: sp(3);
+  font-size: 0.875rem;
+  color: $c-text-2;
+  cursor: pointer;
+
+  input {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    accent-color: $c-accent;
+    flex: none;
+  }
+}
+
+// ---------------------------------------------------------------- Alerts & states
+.alert {
+  display: flex;
+  gap: sp(3);
+  padding: sp(4);
+  border: 1px solid $c-border;
+  border-radius: $radius-sm;
+  background: $c-card;
+  font-size: 0.9rem;
+
+  app-icon {
+    width: 20px;
+    height: 20px;
+    flex: none;
+    margin-top: 1px;
+  }
+
+  &--error {
+    border-color: rgba(220, 38, 38, 0.3);
+    background: $c-danger-soft;
+    color: $c-danger-text;
+  }
+
+  &--success {
+    border-color: rgba(5, 150, 105, 0.3);
+    background: $c-success-soft;
+    color: $c-success-text;
+  }
+}
+
+.state {
+  display: grid;
+  justify-items: center;
+  gap: sp(3);
+  padding: sp(12) sp(6);
+  border: 1px dashed $c-border-strong;
+  border-radius: $radius-md;
+  text-align: center;
+  color: $c-text-2;
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: $radius-md;
+  background: $c-surface-2;
+  border: 1px solid $c-border;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+    animation: shimmer 1.4s infinite;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Spec readout list (key / value rows, mono values)
+.spec-list {
+  @include reset-list;
+  display: grid;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: sp(4);
+    padding-block: 0.6rem;
+    border-bottom: 1px solid $c-border;
+    font-size: 0.875rem;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  dt,
+  .k {
+    color: $c-text-2;
+  }
+
+  dd,
+  .v {
+    @include mono-num;
+    margin: 0;
+    font-weight: 500;
+    text-align: right;
+    color: $c-text;
+  }
+}
+
+// Grids
+.grid {
+  display: grid;
+  gap: sp(5);
+
+  &--2 {
+    @include up(md) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  &--3 {
+    @include up(md) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @include up(lg) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  &--4 {
+    @include up(sm) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @include up(lg) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+}
