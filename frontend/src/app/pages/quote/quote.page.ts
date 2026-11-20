@@ -212,7 +212,7 @@ export class QuotePage implements OnInit {
     const e = control.errors;
     if (e['server']) return e['server'];
     if (e['required']) return requiredMessage(name);
-    if (e['requiredTrue']) return 'Pre odoslanie dopytu potrebujeme váš súhlas.';
+    if (name === 'consent') return 'Pre odoslanie dopytu potrebujeme váš súhlas.';
     if (e['email']) return 'Zadajte platnú e-mailovú adresu (napr. meno@firma.sk).';
     if (e['minlength']) return 'Zadajte prosím celé meno a priezvisko.';
     if (e['min'] || e['max']) return 'Zadajte počet kusov od 1 do 100 000.';

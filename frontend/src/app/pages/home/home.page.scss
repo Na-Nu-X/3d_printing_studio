@@ -154,7 +154,8 @@
 
     dl {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: auto auto auto;
+      justify-content: space-between;
       gap: sp(4);
       margin: 0;
     }
@@ -167,8 +168,9 @@
 
     dd {
       margin: sp(1) 0 0;
-      font-size: clamp(0.8rem, 0.7rem + 0.4vw, 0.95rem);
+      font-size: clamp(0.72rem, 0.6rem + 0.4vw, 0.95rem);
       font-weight: 600;
+      white-space: nowrap;
       color: $c-on-carbon;
     }
   }

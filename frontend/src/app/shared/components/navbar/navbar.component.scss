@@ -152,9 +152,24 @@
 }
 
 // ------------------------------------------------------------ Drawer
-.drawer-backdrop {
+.drawer-layer {
   position: fixed;
   inset: $header-height 0 0;
+  overflow: hidden;
+  pointer-events: none;
+
+  &.is-open {
+    pointer-events: auto;
+  }
+
+  @include up(lg) {
+    display: none;
+  }
+}
+
+.drawer-backdrop {
+  position: absolute;
+  inset: 0;
   background: rgba(15, 23, 42, 0.4);
   opacity: 0;
   pointer-events: none;
@@ -171,8 +186,8 @@
 }
 
 .drawer {
-  position: fixed;
-  top: $header-height;
+  position: absolute;
+  top: 0;
   right: 0;
   bottom: 0;
   width: min(420px, 100%);

@@ -105,7 +105,7 @@ export class CadModelingPage implements OnInit {
     if (!control.errors || !(control.touched || this.attempted())) return '';
     const e = control.errors;
     if (e['server']) return e['server'];
-    if (e['requiredTrue']) return 'Pre odoslanie dopytu potrebujeme váš súhlas.';
+    if (name === 'consent') return 'Pre odoslanie dopytu potrebujeme váš súhlas.';
     if (e['required']) {
       return name === 'description'
         ? 'Popíšte prosím, čo potrebujete vymodelovať.'

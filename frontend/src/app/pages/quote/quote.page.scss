@@ -92,8 +92,14 @@
 }
 
 .tabs {
-  display: inline-flex;
-  justify-self: start;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  @include up(sm) {
+    display: inline-flex;
+    justify-self: start;
+  }
+
   gap: sp(1);
   padding: 3px;
   border: 1px solid $c-border;
@@ -110,8 +116,10 @@
     border-radius: 3px;
     background: transparent;
     color: $c-text-2;
+    justify-content: center;
     font-size: 0.875rem;
     font-weight: 500;
+    white-space: nowrap;
 
     app-icon {
       width: 16px;
