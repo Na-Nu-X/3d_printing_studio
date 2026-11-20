@@ -1,0 +1,248 @@
+@if (catalog.error()) {
+  <div class="state">
+    <app-icon name="alert" />
+    <p>Kalkulačku sa nepodarilo načítať. Skontrolujte pripojenie k serveru.</p>
+    <button type="button" class="btn btn--outline btn--sm" (click)="catalog.load(true)">
+      Skúsiť znova
+    </button>
+  </div>
+} @else if (catalog.loading() || !material()) {
+  <div class="estimator estimator--loading" aria-busy="true">
+    <div class="skeleton" style="height: 520px"></div>
+    <div class="skeleton" style="height: 520px"></div>
+  </div>
+} @else {
+  @let m = material()!;
+  @let r = result()!;
+  <div class="estimator">
+    <div class="estimator__inputs">
+      <!-- 1. Technology & material -->
+      <fieldset class="step">
+        <legend class="step__legend">
+          <span class="step__num mono">01</span> Výber technológie a materiálu
+        </legend>
+        <div class="segmented" role="radiogroup" aria-label="Technológia">
+          @for (t of catalog.technologies(); track t.slug) {
+            <button
+              type="button"
+              role="radio"
+              class="segmented__btn"
+              [attr.aria-checked]="t.slug === technologySlug()"
+              (click)="selectTechnology(t.slug)"
+            >
+              <app-icon [name]="t.icon_name" />
+              {{ shortName(t.name).split(' / ')[0] }}
+            </button>
+          }
+        </div>
+        <label class="visually-hidden" for="est-material">Materiál</label>
+        <select
+          id="est-material"
+          class="select"
+          [value]="m.slug"
+          (change)="selectMaterial($any($event.target).value)"
+        >
+          @for (opt of technologyMaterials(); track opt.slug) {
+            <option [value]="opt.slug" [selected]="opt.slug === m.slug">
+              {{ opt.name }} — {{ opt.price_per_gram_eur | eur: true }}/g
+            </option>
+          }
+        </select>
+        <div class="tag-list step__tags">
+          @for (tag of m.properties_tags.slice(0, 3); track tag) {
+            <span class="tag">{{ tag }}</span>
+          }
+        </div>
+      </fieldset>
+
+      <!-- 2. Weight / size -->
+      <fieldset class="step">
+        <legend class="step__legend">
+          <span class="step__num mono">02</span> Odhadovaná hmotnosť alebo veľkosť dielu
+        </legend>
+        <div class="range-head">
+          <label for="est-grams" class="range-head__label">Hmotnosť jedného kusu</label>
+          <span class="range-head__value mono">{{ int(grams()) }} g</span>
+        </div>
+        <input
+          id="est-grams"
+          type="range"
+          class="range"
+          [min]="weightRange.min"
+          [max]="weightRange.max"
+          [step]="weightRange.step"
+          [value]="grams()"
+          [style.--fill]="gramsFill() + '%'"
+          (input)="setGrams($any($event.target).value)"
+          aria-describedby="est-grams-scale"
+        />
+        <div class="range-scale mono" id="est-grams-scale">
+          <span>{{ weightRange.min }} g</span><span>{{ int(weightRange.max) }} g</span>
+        </div>
+        <div class="presets">
+          @for (p of sizePresets; track p.grams) {
+            <button
+              type="button"
+              class="chip"
+              [attr.aria-pressed]="grams() === p.grams"
+              (click)="setGrams(p.grams)"
+            >
+              {{ p.label }} <span class="count">~{{ p.grams }} g</span>
+            </button>
+          }
+        </div>
+      </fieldset>
+
+      <!-- 3. Infill -->
+      <fieldset class="step">
+        <legend class="step__legend">
+          <span class="step__num mono">03</span> Požadovaná pevnosť / výplň
+        </legend>
+        <div class="option-cards option-cards--3">
+          @for (o of infillOptions; track o.value) {
+            <label class="option-card">
+              <input
+                type="radio"
+                name="est-infill"
+                [value]="o.value"
+                [checked]="infill() === o.value"
+                (change)="infill.set(o.value)"
+              />
+              <span class="infill-meter" aria-hidden="true">
+                <span [style.height.%]="o.percent"></span>
+              </span>
+              <span class="option-card__title"><span class="mono">{{ o.percent }} %</span> {{ o.label }}</span>
+              <span class="option-card__meta">{{ o.hint }}</span>
+            </label>
+          }
+        </div>
+      </fieldset>
+
+      <!-- 4. Quantity -->
+      <fieldset class="step">
+        <legend class="step__legend">
+          <span class="step__num mono">04</span> Počet kusov v sérii
+        </legend>
+        <div class="qty">
+          <div class="stepper">
+            <button type="button" (click)="stepQuantity(-1)" aria-label="Znížiť počet" [disabled]="quantity() <= qtyRange.min">
+              <app-icon name="minus" />
+            </button>
+            <label class="visually-hidden" for="est-qty">Počet kusov</label>
+            <input
+              id="est-qty"
+              type="number"
+              inputmode="numeric"
+              class="mono"
+              [min]="qtyRange.min"
+              [max]="qtyRange.max"
+              [value]="quantity()"
+              (change)="setQuantity($any($event.target).value)"
+            />
+            <span class="stepper__unit">ks</span>
+            <button type="button" (click)="stepQuantity(1)" aria-label="Zvýšiť počet" [disabled]="quantity() >= qtyRange.max">
+              <app-icon name="plus" />
+            </button>
+          </div>
+          <input
+            type="range"
+            class="range"
+            [min]="qtyRange.min"
+            [max]="qtyRange.max"
+            [value]="quantity()"
+            [style.--fill]="qtyFill() + '%'"
+            (input)="setQuantity($any($event.target).value)"
+            aria-label="Počet kusov – posuvník"
+          />
+        </div>
+        <ul class="tiers" aria-label="Množstevné zľavy">
+          @for (t of tiers; track t.minQty) {
+            <li>
+              <button
+                type="button"
+                class="tier"
+                [class.is-active]="r.discountRate === t.discount"
+                (click)="setQuantity(t.minQty)"
+              >
+                <span class="tier__discount mono">-{{ percent(t.discount) }}</span>
+                <span class="tier__label">od {{ t.minQty }} ks</span>
+              </button>
+            </li>
+          }
+        </ul>
+      </fieldset>
+    </div>
+
+    <!-- Result readout -->
+    <aside class="readout" aria-live="polite">
+      <div class="readout__head">
+        <span class="readout__label">Orientačná kalkulácia</span>
+        @if (r.isExpress) {
+          <span class="badge badge--success">Expres</span>
+        }
+      </div>
+
+      <div class="readout__primary">
+        <span class="readout__caption">Cena za kus</span>
+        <span class="readout__price mono">{{ r.pricePerPiece | eur }}</span>
+        <span class="readout__vat">bez DPH · {{ shortName(m.name) }}</span>
+      </div>
+
+      <dl class="readout__rows">
+        <div>
+          <dt>Celková cena série</dt>
+          <dd class="mono readout__total">{{ r.totalPrice | eur }}</dd>
+        </div>
+        <div>
+          <dt>Množstevná zľava</dt>
+          <dd class="mono">
+            @if (r.discountRate > 0) {
+              <span class="readout__discount">-{{ percent(r.discountRate) }}</span>
+            } @else {
+              <span class="readout__muted">0 %</span>
+            }
+          </dd>
+        </div>
+        @if (r.savings > 0) {
+          <div>
+            <dt>Ušetríte</dt>
+            <dd class="mono readout__discount">{{ r.savings | eur }}</dd>
+          </div>
+        }
+        <div>
+          <dt>Odhadovaný čas výroby</dt>
+          <dd class="mono">{{ leadTimeLabel() }}</dd>
+        </div>
+        <div>
+          <dt>Spotreba materiálu</dt>
+          <dd class="mono">{{ int(r.materialGrams) }} g</dd>
+        </div>
+        <div>
+          <dt>Prípravný poplatok</dt>
+          <dd class="mono">{{ r.setupFee | eur }}</dd>
+        </div>
+      </dl>
+
+      @if (r.nextTier; as next) {
+        <p class="readout__hint">
+          <app-icon name="info" />
+          Pri <strong class="mono">{{ next.minQty }} ks</strong> získate zľavu
+          <strong class="mono">-{{ percent(next.discount) }}</strong>.
+        </p>
+      }
+
+      <a
+        class="btn btn--primary btn--lg btn--block readout__cta"
+        routerLink="/dopyt"
+        [queryParams]="quoteParams()"
+      >
+        <app-icon name="upload" />
+        Nahrať STL / STEP a získať presnú cenu
+      </a>
+      <p class="readout__disclaimer">
+        Orientačná cena slúži na rýchle porovnanie. Presnú ponuku pripravíme po analýze vášho
+        3D modelu – zvyčajne do 24 hodín.
+      </p>
+    </aside>
+  </div>
+}

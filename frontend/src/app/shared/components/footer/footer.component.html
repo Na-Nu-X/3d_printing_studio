@@ -1,0 +1,82 @@
+<footer class="footer">
+  <div class="container">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <app-logo [inverse]="true" />
+        <p>{{ config.description }}</p>
+        <div class="footer__formats" aria-label="Podporované formáty súborov">
+          @for (format of config.fileFormats; track format) {
+            <span class="badge badge--dark">{{ format }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="footer__col">
+        <h2 class="footer__title">Dielňa a osobný odber</h2>
+        <address>
+          <a [href]="config.address.mapUrl" target="_blank" rel="noopener" class="footer__line">
+            <app-icon name="map-pin" />
+            <span>
+              {{ config.address.street }}<br />
+              {{ config.address.zip }} {{ config.address.city }}
+            </span>
+          </a>
+        </address>
+        <dl class="footer__hours">
+          @for (row of config.pickupHours; track row.days) {
+            <div>
+              <dt>{{ row.days }}</dt>
+              <dd class="mono">{{ row.hours }}</dd>
+            </div>
+          }
+        </dl>
+      </div>
+
+      <div class="footer__col">
+        <h2 class="footer__title">Technické oddelenie</h2>
+        <a [href]="config.contact.phoneHref" class="footer__line mono">
+          <app-icon name="phone" /> {{ config.contact.phone }}
+        </a>
+        <a [href]="'mailto:' + config.contact.email" class="footer__line mono">
+          <app-icon name="mail" /> {{ config.contact.email }}
+        </a>
+        <p class="footer__note">{{ config.contact.responseTime }}</p>
+        <div class="footer__social">
+          @for (s of config.social; track s.label) {
+            <a [href]="s.url" target="_blank" rel="noopener" [attr.aria-label]="s.label">
+              <app-icon [name]="s.icon" />
+            </a>
+          }
+        </div>
+      </div>
+
+      <nav class="footer__col" aria-label="Rýchle odkazy">
+        <h2 class="footer__title">Rýchle odkazy</h2>
+        <ul class="footer__links">
+          @for (link of quickLinks; track link.path) {
+            <li><a [routerLink]="link.path">{{ link.label }}</a></li>
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <div class="footer__gdpr">
+      <app-icon name="shield" />
+      <p>
+        <strong>Ochrana osobných údajov a dôvernosť dát.</strong>
+        Osobné údaje a nahrané 3D modely spracúvame v súlade s nariadením GDPR (EÚ) 2016/679
+        výhradne na účely vypracovania cenovej ponuky a realizácie zákazky. Vaše návrhy
+        neposkytujeme tretím stranám a na požiadanie podpíšeme dohodu o mlčanlivosti (NDA).
+      </p>
+    </div>
+
+    <div class="footer__bottom">
+      <p>
+        © {{ year }} {{ config.legal.companyName }} · IČO: <span class="mono">{{ config.legal.ico }}</span> ·
+        DIČ: <span class="mono">{{ config.legal.dic }}</span> · IČ DPH:
+        <span class="mono">{{ config.legal.icDph }}</span>
+      </p>
+      <p>{{ config.legal.register }}</p>
+    </div>
+  </div>
+</footer>

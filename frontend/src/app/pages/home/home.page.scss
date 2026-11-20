@@ -1,0 +1,525 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+:host {
+  display: block;
+}
+
+// ------------------------------------------------------------ Hero
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding-top: sp(12);
+  background: $c-carbon;
+  color: $c-on-carbon;
+  @include grid-lines(rgba(248, 250, 252, 0.045), 48px);
+
+  @include up(lg) {
+    padding-top: sp(20);
+  }
+
+  // Orange glow anchoring the composition
+  &::before {
+    content: '';
+    position: absolute;
+    right: -10%;
+    top: 10%;
+    width: 60%;
+    height: 70%;
+    background: radial-gradient(closest-side, rgba(234, 88, 12, 0.18), transparent);
+    pointer-events: none;
+  }
+
+  &__grid {
+    position: relative;
+    display: grid;
+    gap: sp(12);
+    align-items: center;
+
+    @include up(lg) {
+      grid-template-columns: 1.1fr 1fr;
+      gap: sp(16);
+    }
+  }
+
+  &__kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: sp(2);
+    padding: 0.35rem 0.75rem;
+    border: 1px solid $c-carbon-line;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    color: $c-on-carbon-muted;
+  }
+
+  &__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: $c-success;
+    box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.6);
+    animation: pulse 2s infinite;
+  }
+
+  h1 {
+    margin-top: sp(6);
+    max-width: 16ch;
+  }
+
+  &__accent {
+    color: $c-accent;
+  }
+
+  &__lead {
+    max-width: 56ch;
+    margin-top: sp(6);
+    font-size: clamp(1.05rem, 1rem + 0.3vw, 1.2rem);
+    line-height: 1.65;
+    color: #cbd5e1;
+  }
+
+  &__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: sp(3);
+    margin-top: sp(8);
+
+    .btn {
+      @include down(sm) {
+        width: 100%;
+      }
+    }
+  }
+
+  &__formats {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: sp(2);
+    margin-top: sp(6);
+  }
+
+  &__formats-label {
+    font-size: 0.8rem;
+    color: $c-on-carbon-muted;
+  }
+
+  // Visual
+  &__visual {
+    position: relative;
+    margin: 0;
+  }
+
+  &__frame {
+    @include crop-marks($c-accent, 18px);
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border: 1px solid $c-carbon-line;
+    border-radius: $radius-sm;
+    padding: sp(2);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 2px;
+      filter: saturate(0.85) contrast(1.05);
+    }
+  }
+
+  &__scanline {
+    position: absolute;
+    left: sp(2);
+    right: sp(2);
+    top: 20%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, $c-accent, transparent);
+    box-shadow: 0 0 12px 1px rgba(234, 88, 12, 0.6);
+    animation: scan 5s $ease infinite;
+  }
+
+  &__specs {
+    position: relative;
+    margin: calc(-1 * #{sp(10)}) sp(4) 0;
+    padding: sp(4) sp(5);
+    border: 1px solid $c-carbon-line;
+    border-radius: $radius-sm;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(8px);
+
+    @include up(md) {
+      margin-inline: sp(8) calc(-1 * #{sp(4)});
+    }
+
+    dl {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: sp(4);
+      margin: 0;
+    }
+
+    dt {
+      @include eyebrow;
+      font-size: 0.62rem;
+      color: $c-on-carbon-muted;
+    }
+
+    dd {
+      margin: sp(1) 0 0;
+      font-size: clamp(0.8rem, 0.7rem + 0.4vw, 0.95rem);
+      font-weight: 600;
+      color: $c-on-carbon;
+    }
+  }
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin-top: sp(16);
+  border-top: 1px solid $c-carbon-line;
+
+  @include up(lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  li {
+    display: grid;
+    gap: sp(1);
+    padding: sp(6) sp(4) sp(8) 0;
+
+    @include up(lg) {
+      padding-left: sp(6);
+      border-left: 1px solid $c-carbon-line;
+
+      &:first-child {
+        padding-left: 0;
+        border-left: 0;
+      }
+    }
+  }
+
+  &__value {
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.1rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+
+  &__label {
+    font-size: 0.85rem;
+    color: $c-on-carbon-muted;
+  }
+}
+
+@keyframes pulse {
+  70% {
+    box-shadow: 0 0 0 8px rgba(5, 150, 105, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(5, 150, 105, 0);
+  }
+}
+
+@keyframes scan {
+  0%,
+  100% {
+    top: 12%;
+    opacity: 0;
+  }
+  10%,
+  90% {
+    opacity: 1;
+  }
+  50% {
+    top: 86%;
+  }
+}
+
+// ------------------------------------------------------------ Technologies
+.tech {
+  @include card(true);
+  display: flex;
+  flex-direction: column;
+  padding: sp(6);
+
+  @include up(lg) {
+    padding: sp(8);
+  }
+
+  &__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border: 1px solid $c-border;
+    border-radius: $radius-sm;
+    background: $c-surface-2;
+    color: $c-accent;
+
+    app-icon {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  &__index {
+    font-size: 0.8rem;
+    color: $c-text-3;
+  }
+
+  &__title {
+    margin-top: sp(6);
+    font-size: 1.5rem;
+  }
+
+  &__sub {
+    margin-top: sp(1);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $c-accent-text;
+  }
+
+  &__summary {
+    margin-top: sp(4);
+    font-size: 0.925rem;
+    color: $c-text-2;
+  }
+
+  &__specs {
+    margin-block: sp(6);
+    border-top: 1px solid $c-border;
+  }
+
+  &__link {
+    margin-top: auto;
+    align-self: flex-start;
+
+    app-icon {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+// ------------------------------------------------------------ Pillars
+.pillars {
+  display: grid;
+  border: 1px solid $c-border;
+  border-radius: $radius-md;
+  background: $c-card;
+
+  @include up(md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include up(lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.pillar {
+  display: grid;
+  align-content: start;
+  gap: sp(3);
+  padding: sp(6);
+  border-bottom: 1px solid $c-border;
+
+  @include up(md) {
+    &:nth-child(odd) {
+      border-right: 1px solid $c-border;
+    }
+
+    &:nth-last-child(-n + 2) {
+      border-bottom: 0;
+    }
+  }
+
+  @include up(lg) {
+    padding: sp(8) sp(6);
+    border-bottom: 0;
+    border-right: 1px solid $c-border;
+
+    &:last-child {
+      border-right: 0;
+    }
+  }
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: sp(4);
+
+    app-icon {
+      width: 28px;
+      height: 28px;
+      color: $c-accent;
+    }
+  }
+
+  &__metric {
+    padding: 0.2rem 0.5rem;
+    border: 1px solid rgba(5, 150, 105, 0.3);
+    border-radius: $radius-xs;
+    background: $c-success-soft;
+    color: $c-success-text;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  &__title {
+    font-size: 1.1rem;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: $c-text-2;
+  }
+}
+
+// ------------------------------------------------------------ How to order
+.how {
+  @include grid-lines(rgba(248, 250, 252, 0.035), 48px);
+
+  &__eyebrow {
+    color: $c-accent;
+  }
+
+  &__steps {
+    display: grid;
+    gap: 0;
+    counter-reset: step;
+
+    @include up(md) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include up(lg) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  &__step {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: sp(3);
+    padding: sp(6) sp(6) sp(6) 0;
+    border-top: 1px solid $c-carbon-line;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: 0;
+      width: 7px;
+      height: 7px;
+      background: $c-accent;
+      transform: rotate(45deg);
+    }
+
+    h3 {
+      font-size: 1.15rem;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: $c-on-carbon-muted;
+      max-width: 32ch;
+    }
+  }
+
+  &__num {
+    font-size: 0.8rem;
+    color: $c-accent;
+  }
+}
+
+// ------------------------------------------------------------ Reviews
+.review {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: sp(5);
+  margin: 0;
+  padding: sp(6);
+
+  &__stars {
+    display: flex;
+    gap: 2px;
+    color: $c-accent;
+
+    app-icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    ::ng-deep path {
+      fill: currentColor;
+    }
+  }
+
+  blockquote {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: $c-text;
+  }
+
+  figcaption {
+    display: grid;
+    gap: 2px;
+    margin-top: auto;
+    padding-top: sp(4);
+    border-top: 1px solid $c-border;
+    font-size: 0.875rem;
+
+    span {
+      color: $c-text-2;
+      font-size: 0.8rem;
+    }
+  }
+}
+
+// ------------------------------------------------------------ CTA
+.cta {
+  display: grid;
+  gap: sp(6);
+  align-items: center;
+  padding: sp(8) sp(6);
+  border-radius: $radius-md;
+  background: $c-carbon;
+  color: $c-on-carbon;
+  @include grid-lines(rgba(248, 250, 252, 0.04), 32px);
+
+  @include up(lg) {
+    grid-template-columns: 1fr auto;
+    padding: sp(12);
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem);
+  }
+
+  p {
+    margin-top: sp(3);
+    color: $c-on-carbon-muted;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: sp(3);
+  }
+}

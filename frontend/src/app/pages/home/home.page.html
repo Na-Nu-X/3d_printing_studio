@@ -1,0 +1,272 @@
+<!-- ============================================================ HERO -->
+<section class="hero">
+  <div class="container hero__grid">
+    <div class="hero__copy">
+      <span class="hero__kicker mono">
+        <span class="hero__dot" aria-hidden="true"></span>
+        Výroba v prevádzke · FDM · SLA · SLS
+      </span>
+      <h1>Od 3D modelu k funkčnému dielu <span class="hero__accent">už za 48 hodín</span></h1>
+      <p class="hero__lead">
+        Zákazková 3D tlač a malosériová výroba pre firmy, konštruktérov aj vývojárov. Funkčné
+        prototypy, náhradné diely a pilotné série z technických plastov a kompozitov s presnosťou
+        až {{ config.capabilities.bestTolerance }}.
+      </p>
+      <div class="hero__ctas">
+        <a routerLink="/dopyt" class="btn btn--primary btn--lg">
+          <app-icon name="upload" />
+          Nahrať 3D model / Získať ponuku
+        </a>
+        <a routerLink="/" fragment="kalkulacka" class="btn btn--ghost-light btn--lg">
+          <app-icon name="calculator" />
+          Orientačná kalkulačka ceny
+        </a>
+      </div>
+      <div class="hero__formats">
+        <span class="hero__formats-label">Podporované formáty</span>
+        @for (f of config.fileFormats.slice(0, 3); track f) {
+          <span class="badge badge--dark">{{ f }}</span>
+        }
+        <span class="hero__formats-label">· NDA na požiadanie</span>
+      </div>
+    </div>
+
+    <figure class="hero__visual">
+      <div class="hero__frame">
+        <img
+          [src]="heroImage"
+          alt="Farma priemyselných 3D tlačiarní počas výroby"
+          width="1200"
+          height="900"
+          fetchpriority="high"
+        />
+        <div class="hero__scanline" aria-hidden="true"></div>
+      </div>
+      <figcaption class="hero__specs">
+        <dl>
+          <div>
+            <dt>Tolerancia</dt>
+            <dd class="mono">{{ config.capabilities.bestTolerance }}</dd>
+          </div>
+          <div>
+            <dt>Tlačový objem</dt>
+            <dd class="mono">{{ config.capabilities.maxBuildVolume }}</dd>
+          </div>
+          <div>
+            <dt>Výška vrstvy od</dt>
+            <dd class="mono">{{ config.capabilities.minLayerHeight }}</dd>
+          </div>
+        </dl>
+      </figcaption>
+    </figure>
+  </div>
+
+  <div class="container">
+    <ul class="metrics" aria-label="Štúdio v číslach">
+      @for (m of config.trustMetrics; track m.label) {
+        <li>
+          <span class="metrics__value mono">{{ m.value }}</span>
+          <span class="metrics__label">{{ m.label }}</span>
+        </li>
+      }
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ TECHNOLOGIES -->
+<section class="section" id="technologie">
+  <div class="container">
+    <div class="section-head section-head--split">
+      <div>
+        <span class="eyebrow">Výrobné technológie</span>
+        <h2>Naše výrobné technológie</h2>
+        <p>Pre každý diel volíme technológiu podľa funkcie, presnosti a počtu kusov – nie podľa toho, čo je práve voľné.</p>
+      </div>
+      <a routerLink="/technologie-a-materialy" class="btn btn--outline">
+        Všetky materiály <app-icon name="arrow-right" />
+      </a>
+    </div>
+
+    @if (catalog.error()) {
+      <div class="state">
+        <app-icon name="alert" />
+        <p>Technológie sa nepodarilo načítať.</p>
+        <button type="button" class="btn btn--outline btn--sm" (click)="catalog.load(true)">Skúsiť znova</button>
+      </div>
+    } @else if (catalog.loading()) {
+      <div class="grid grid--3">
+        @for (i of [1, 2, 3]; track i) {
+          <div class="skeleton" style="height: 420px"></div>
+        }
+      </div>
+    } @else {
+      <div class="grid grid--3">
+        @for (t of catalog.technologies(); track t.slug; let i = $index) {
+          <article class="tech">
+            <div class="tech__head">
+              <span class="tech__icon"><app-icon [name]="t.icon_name" [strokeWidth]="1.5" /></span>
+              <span class="tech__index mono">0{{ i + 1 }}</span>
+            </div>
+            <h3 class="tech__title">{{ techShort(t.name) }}</h3>
+            <p class="tech__sub">{{ techSub(t.name) }}</p>
+            <p class="tech__summary">{{ t.short_summary }}</p>
+            <ul class="spec-list tech__specs">
+              <li><span class="k">Tolerancia</span><span class="v">{{ t.tolerance_label }}</span></li>
+              <li><span class="k">Max. objem</span><span class="v">{{ t.max_build_volume }}</span></li>
+              <li><span class="k">Min. vrstva</span><span class="v">{{ t.min_layer_height }}</span></li>
+              <li><span class="k">Dodanie</span><span class="v">{{ t.typical_lead_time }}</span></li>
+            </ul>
+            <a
+              class="btn btn--link tech__link"
+              routerLink="/technologie-a-materialy"
+              [queryParams]="{ technologia: t.slug }"
+            >
+              {{ t.material_count }} {{ t.material_count === 1 ? 'materiál' : t.material_count < 5 ? 'materiály' : 'materiálov' }}
+              <app-icon name="arrow-right" />
+            </a>
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- ============================================================ ESTIMATOR -->
+<section class="section section--soft estimator-section" id="kalkulacka">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Okamžitá kalkulácia</span>
+      <h2>Koľko bude stáť váš diel?</h2>
+      <p>
+        Zvoľte materiál, približnú hmotnosť, pevnosť a počet kusov. Orientačnú cenu vrátane
+        množstevnej zľavy uvidíte okamžite – presnú ponuku pripravíme po nahratí modelu.
+      </p>
+    </div>
+    <app-price-estimator />
+  </div>
+</section>
+
+<!-- ============================================================ PILLARS -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Prečo my</span>
+      <h2>Prečo vyrábať v našom štúdiu</h2>
+    </div>
+    <div class="pillars">
+      @for (p of pillars; track p.title) {
+        <article class="pillar">
+          <div class="pillar__top">
+            <app-icon [name]="p.icon" [strokeWidth]="1.5" />
+            <span class="pillar__metric mono">{{ p.metric }}</span>
+          </div>
+          <h3 class="pillar__title">{{ p.title }}</h3>
+          <p>{{ p.text }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ HOW TO ORDER -->
+<section class="section section--carbon how" id="ako-objednat">
+  <div class="container">
+    <div class="section-head section-head--split">
+      <div>
+        <span class="eyebrow how__eyebrow">Ako objednať</span>
+        <h2>Štyri kroky od súboru k hotovému dielu</h2>
+      </div>
+      <a routerLink="/dopyt" class="btn btn--primary">
+        Začať dopyt <app-icon name="arrow-right" />
+      </a>
+    </div>
+    <ol class="how__steps">
+      @for (s of steps; track s.title; let i = $index) {
+        <li class="how__step">
+          <span class="how__num mono">0{{ i + 1 }}</span>
+          <h3>{{ s.title }}</h3>
+          <p>{{ s.text }}</p>
+        </li>
+      }
+    </ol>
+  </div>
+</section>
+
+<!-- ============================================================ PORTFOLIO -->
+<section class="section">
+  <div class="container">
+    <div class="section-head section-head--split">
+      <div>
+        <span class="eyebrow">Realizácie</span>
+        <h2>Ukážky realizácií</h2>
+        <p>Od jedného prototypu po stovky kusov – pozrite si, čo sme vyrobili pre klientov z priemyslu, architektúry a zdravotníctva.</p>
+      </div>
+      <a routerLink="/realizacie" class="btn btn--outline">
+        Celé portfólio <app-icon name="arrow-right" />
+      </a>
+    </div>
+    @if (projectsLoading()) {
+      <div class="grid grid--3">
+        @for (i of [1, 2, 3]; track i) {
+          <div class="skeleton" style="height: 460px"></div>
+        }
+      </div>
+    } @else if (projects().length) {
+      <div class="grid grid--3">
+        @for (p of projects(); track p.slug) {
+          <app-portfolio-card [project]="p" [compact]="true" />
+        }
+      </div>
+    } @else {
+      <div class="state"><p>Realizácie momentálne nie je možné načítať.</p></div>
+    }
+  </div>
+</section>
+
+<!-- ============================================================ REVIEWS -->
+<section class="section section--soft">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Referencie</span>
+      <h2>Čo hovoria naši B2B klienti</h2>
+    </div>
+    <div class="grid grid--3">
+      @for (t of config.testimonials; track t.author) {
+        <figure class="review">
+          <div class="review__stars" aria-label="Hodnotenie 5 z 5">
+            @for (s of [1, 2, 3, 4, 5]; track s) {
+              <app-icon name="star" />
+            }
+          </div>
+          <blockquote>„{{ t.quote }}“</blockquote>
+          <figcaption>
+            <strong>{{ t.author }}</strong>
+            <span>{{ t.role }}, {{ t.company }}</span>
+          </figcaption>
+        </figure>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CTA -->
+<section class="section section--tight">
+  <div class="container">
+    <div class="cta">
+      <div>
+        <h2>Nemáte 3D model? Navrhneme ho za vás.</h2>
+        <p>
+          Z výkresu, náčrtu alebo poškodeného dielu vytvoríme presný CAD model pripravený na tlač.
+        </p>
+      </div>
+      <div class="cta__actions">
+        <a routerLink="/3d-modelovanie" class="btn btn--primary btn--lg">
+          <app-icon name="pencil" /> 3D modelovanie
+        </a>
+        <a [href]="config.contact.phoneHref" class="btn btn--ghost-light btn--lg mono">
+          <app-icon name="phone" /> {{ config.contact.phone }}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

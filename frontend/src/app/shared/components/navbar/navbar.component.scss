@@ -1,0 +1,255 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+:host {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: block;
+}
+
+.navbar {
+  background: rgba(248, 250, 252, 0.88);
+  backdrop-filter: saturate(1.4) blur(12px);
+  border-bottom: 1px solid transparent;
+  transition:
+    border-color $dur $ease,
+    background-color $dur $ease;
+
+  &.is-scrolled,
+  &.is-open {
+    border-bottom-color: $c-border;
+    background: rgba(255, 255, 255, 0.94);
+  }
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    gap: sp(6);
+    height: $header-height;
+  }
+
+  &__brand {
+    display: inline-flex;
+    flex: none;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  &__nav {
+    display: none;
+    margin-inline: auto;
+
+    @include up(lg) {
+      display: block;
+    }
+  }
+
+  &__links {
+    display: flex;
+    gap: sp(1);
+  }
+
+  &__link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: $header-height;
+    padding-inline: sp(3);
+    color: $c-text-2;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color $dur-fast $ease;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: sp(3);
+      right: sp(3);
+      bottom: -1px;
+      height: 2px;
+      background: $c-accent;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform $dur $ease;
+    }
+
+    &:hover {
+      color: $c-text;
+      text-decoration: none;
+    }
+
+    &.is-active {
+      color: $c-text;
+
+      &::after {
+        transform: scaleX(1);
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: sp(3);
+    margin-left: auto;
+
+    @include up(lg) {
+      margin-left: 0;
+    }
+  }
+
+  &__phone {
+    display: none;
+    align-items: center;
+    gap: sp(2);
+    font-size: 0.85rem;
+    color: $c-text-2;
+    white-space: nowrap;
+
+    app-icon {
+      width: 16px;
+      height: 16px;
+      color: $c-accent;
+    }
+
+    @include up(xl) {
+      display: inline-flex;
+    }
+  }
+
+  &__cta {
+    display: none;
+
+    @include up(sm) {
+      display: inline-flex;
+    }
+  }
+
+  &__toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid $c-border;
+    border-radius: $radius-sm;
+    background: $c-card;
+    color: $c-text;
+
+    app-icon {
+      width: 22px;
+      height: 22px;
+    }
+
+    @include up(lg) {
+      display: none;
+    }
+  }
+}
+
+// ------------------------------------------------------------ Drawer
+.drawer-backdrop {
+  position: fixed;
+  inset: $header-height 0 0;
+  background: rgba(15, 23, 42, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity $dur $ease;
+
+  &.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @include up(lg) {
+    display: none;
+  }
+}
+
+.drawer {
+  position: fixed;
+  top: $header-height;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: sp(6);
+  padding: sp(6) $container-gutter sp(8);
+  background: $c-card;
+  border-left: 1px solid $c-border;
+  overflow-y: auto;
+  transform: translateX(100%);
+  visibility: hidden;
+  transition:
+    transform 260ms $ease,
+    visibility 0s linear 260ms;
+
+  &.is-open {
+    transform: none;
+    visibility: visible;
+    transition: transform 260ms $ease;
+  }
+
+  @include up(lg) {
+    display: none;
+  }
+
+  &__links {
+    display: grid;
+    border-top: 1px solid $c-border;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: sp(4);
+    padding-block: sp(5);
+    border-bottom: 1px solid $c-border;
+    color: $c-text;
+    font-family: $font-display;
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+
+    app-icon {
+      margin-left: auto;
+      color: $c-text-3;
+    }
+
+    &:hover {
+      text-decoration: none;
+      color: $c-accent-text;
+    }
+  }
+
+  &__index {
+    font-size: 0.75rem;
+    color: $c-accent-text;
+  }
+
+  &__footer {
+    display: grid;
+    gap: sp(3);
+  }
+
+  &__contact {
+    display: inline-flex;
+    align-items: center;
+    gap: sp(2);
+    color: $c-text-2;
+    font-size: 0.9rem;
+
+    app-icon {
+      width: 16px;
+      height: 16px;
+      color: $c-accent;
+    }
+  }
+}

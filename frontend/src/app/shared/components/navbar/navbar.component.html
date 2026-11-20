@@ -1,0 +1,92 @@
+<header class="navbar" [class.is-scrolled]="scrolled()" [class.is-open]="open()">
+  <div class="navbar__inner container">
+    <a routerLink="/" class="navbar__brand" [attr.aria-label]="config.studioName + ' – domov'">
+      <app-logo />
+    </a>
+
+    <nav class="navbar__nav" aria-label="Hlavná navigácia">
+      <ul class="navbar__links">
+        @for (link of links; track link.label) {
+          <li>
+            @if (link.fragment) {
+              <a [routerLink]="link.path" [fragment]="link.fragment" class="navbar__link">
+                {{ link.label }}
+              </a>
+            } @else {
+              <a
+                [routerLink]="link.path"
+                routerLinkActive="is-active"
+                ariaCurrentWhenActive="page"
+                class="navbar__link"
+              >
+                {{ link.label }}
+              </a>
+            }
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <div class="navbar__actions">
+      <a [href]="config.contact.phoneHref" class="navbar__phone mono">
+        <app-icon name="phone" />
+        {{ config.contact.phone }}
+      </a>
+      <a routerLink="/dopyt" class="btn btn--primary navbar__cta">
+        Cenová ponuka
+        <app-icon name="arrow-right" />
+      </a>
+      <button
+        type="button"
+        class="navbar__toggle"
+        (click)="toggle()"
+        [attr.aria-expanded]="open()"
+        aria-controls="mobile-drawer"
+        [attr.aria-label]="open() ? 'Zavrieť menu' : 'Otvoriť menu'"
+      >
+        <app-icon [name]="open() ? 'close' : 'menu'" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile drawer -->
+  <div class="drawer-backdrop" [class.is-visible]="open()" (click)="close()" aria-hidden="true"></div>
+  <div
+    id="mobile-drawer"
+    class="drawer"
+    [class.is-open]="open()"
+    [attr.aria-hidden]="!open()"
+    [attr.inert]="open() ? null : ''"
+  >
+    <nav aria-label="Mobilná navigácia">
+      <ul class="drawer__links">
+        @for (link of links; track link.label; let i = $index) {
+          <li>
+            <a
+              [routerLink]="link.path"
+              [fragment]="link.fragment"
+              class="drawer__link"
+              (click)="close()"
+            >
+              <span class="drawer__index mono">0{{ i + 1 }}</span>
+              {{ link.label }}
+              <app-icon name="arrow-right" />
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+    <div class="drawer__footer">
+      <a routerLink="/dopyt" class="btn btn--primary btn--lg btn--block" (click)="close()">
+        <app-icon name="upload" />
+        Nahrať model a získať ponuku
+      </a>
+      <a [href]="config.contact.phoneHref" class="drawer__contact mono">
+        <app-icon name="phone" /> {{ config.contact.phone }}
+      </a>
+      <a [href]="'mailto:' + config.contact.email" class="drawer__contact mono">
+        <app-icon name="mail" /> {{ config.contact.email }}
+      </a>
+    </div>
+  </div>
+</header>
